@@ -33,16 +33,14 @@ function createChart(ctx, group, index) {
             text: 'Time (s)'
           },
           ticks: {
-            stepSize: 5,
+            stepSize: 1,
             callback: v => v.toFixed(1)
           }
         },
         y: {
-          min: -2,
-          max: 2,
           title: {
             display: true,
-            text: 'Sensor Value'
+            text: y_title[index],
           }
         }
       },
@@ -63,12 +61,13 @@ function initCharts() {
     const chart = createChart(canvas, group, i % 3);
     chartMap.set(`${group},${i % 3}`, chart);
 
+    const Ts = 1; // 300 ms sampling period
     chartSettings.set(`${group}`, {
       time: 0,
-      Ts: 1,
+      Ts: Ts,
       maxPoints: 100
     });
-    //startSampling(`${group},${i % 3}`, `${group}`, 1); // testing
+    //startSampling(`${group},${i % 3}`, `${group}`, 1/Ts); // testing
   }
 }
 
@@ -96,8 +95,7 @@ function updateChart(chartId, group) {
   
 }
 
-function startSampling(chartId, group, frequency) {
-  const Ts = 1 / frequency;
+function startSampling(chartId, group, Ts) {
 
   clearInterval(chartTimers.get(chartId));
 

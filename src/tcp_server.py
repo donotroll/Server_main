@@ -1,4 +1,5 @@
 import asyncio
+import json
 import struct
 from http_server import broadcast
 from dataclasses import dataclass
@@ -66,7 +67,7 @@ async def consume_updates():
                         "dataPoint": packet.dataPoints[j].pop(0) if packet.dataPoints[j] else 0.0,
                 }
                 #print(msg)
-                await broadcast(str(msg))
+                await broadcast(str(json.dumps(msg)))
 
 async def start_tcp_server(host: str, port: int):
     server = await asyncio.start_server(handle_client, host, port)

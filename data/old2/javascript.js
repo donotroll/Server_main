@@ -1,4 +1,4 @@
-var gateway = `ws://${window.location.hostname}/ws`;
+var gateway = `ws://${window.location.hostname}:8080/ws`;
 var websocket;
 
 // Data buffers

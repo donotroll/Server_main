@@ -1,7 +1,7 @@
 from aiohttp import web, WSMsgType
 from pathlib import Path
 
-WEB_DIR = Path("data")  
+WEB_DIR = Path("data/test")  
 
 websocket_clients = set()
 

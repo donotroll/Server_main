@@ -1,39 +1,17 @@
 
-const ws = new WebSocket(`ws://${window.location.hostname}/ws`);  
+const ws = new WebSocket(`ws://${window.location.hostname}:8080/ws`);
 
 ws.onmessage = (event) => {
-  const d = JSON.parse(event.data);
-  const { group, index, value } = d;
+  //console.log('Received:', event.data);
+  let d = JSON.parse(event.data);
+  //console.log(`Received value for group ${d.group_id}, index ${d.group_index}: ${d.dataPoint}`);
+  const group = d.group_id;
+  const index = d.group_index;  
+  const value = d.dataPoint;
 
-
-  /*const key = `${group},${index}`;
-  const chart = chartMap.get(key);
-
-  if (!chart) return;
-
-  const dataset = chart.data.datasets[0];
-  const labels = chart.data.labels;
-
-  const ts = 1 / samplingFreq[group];  // time step
-  const lastX = labels.length > 0 ? labels[labels.length - 1] : 0;
-  const nextX = lastX + ts;
-
-  labels.push(nextX);
-  dataset.data.push(value);
-
-  if (labels.length > MAX_POINTS) {
-    labels.shift();
-    dataset.data.shift();
-  }
-
-  chart.options.scales.x.min = labels[0];
-  chart.options.scales.x.max = labels[labels.length - 1];
-  chart.update();
-*/
-
-      const chart = chartMap.get(`${group},${index}`);
-    //console.log(chart.data.datasets[0].data);
-    const settings = chartSettings.get(chartId);
+  const chart = chartMap.get(`${group},${index}`);
+  //console.log(chart.data.datasets[0].data);
+  const settings = chartSettings.get(`${group}`);
   const data = chart.data.datasets[0].data;
   const { time, Ts, maxPoints } = settings;
 
