@@ -14,17 +14,26 @@ class SensorPacket:
 
 data_queue: asyncio.Queue[bytes] = asyncio.Queue()
 update_queue: asyncio.Queue[SensorPacket] = asyncio.Queue()
+config_queue: asyncio.Queue[dict] = asyncio.Queue()
 
 
 async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    if client_ip is None:
+        client_ip = writer.get_extra_info('peername')[0]
     try:
         chunk = await reader.read()  # Read until EOF
         await data_queue.put(chunk)
     except asyncio.CancelledError:
         print("Client disconnected.")
     finally:
-        writer.close()
-        await writer.wait_closed()
+        try:
+            config = config_queue.get_nowait()
+            
+        except asyncio.QueueEmpty:
+            pass
+        finally:
+            writer.close()
+            await writer.wait_closed()
 
 
 async def process_queue():
