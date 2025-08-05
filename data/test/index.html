@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Chart Sensor Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>Real-Time Sensor Dashboard</h2>
+
+ <div class="chart-container">
+  <!-- Group 1: Charts 0-2 -->
+  <div class="chart-group">
+    <button class="dropdown-btn" onclick="toggleDropdown('group1')">Group 1 (Charts 0–2)</button>
+    <div id="group1" class="dropdown-content">
+      <div class="slider-container">
+        <label for="freqSlider1">Sampling Frequency:</label>
+        <input type="range" id="freqSlider1" min="1" max="10" step="1" value="1">
+        <span id="freqLabel1">1 Hz</span>
+      </div>
+      <canvas id="chart-0"></canvas>
+      <canvas id="chart-1"></canvas>
+      <canvas id="chart-2"></canvas>
+    </div>
+  </div>
+
+  <!-- Group 2: Charts 3-5 -->
+  <div class="chart-group">
+    <button class="dropdown-btn" onclick="toggleDropdown('group2')">Group 2 (Charts 3–5)</button>
+    <div id="group2" class="dropdown-content">
+      <div class="slider-container">
+        <label for="freqSlider2">Sampling Frequency:</label>
+        <input type="range" id="freqSlider2" min="1" max="10" step="1" value="1">
+        <span id="freqLabel2">1 Hz</span>
+      </div>
+      <canvas id="chart-3"></canvas>
+      <canvas id="chart-4"></canvas>
+      <canvas id="chart-5"></canvas>
+    </div>
+  </div>
+</div>
+  <script src="chartHandler.js"></script>
+  <script src="script.js"></script>
+  <script>
+  function toggleDropdown(groupId) {
+    const content = document.getElementById(groupId);
+    content.classList.toggle('hidden');
+  }
+</script>
+</body>
+</html>

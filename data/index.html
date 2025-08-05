@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Power Supply Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js""></script>
+</head>
+<body>
+  <div class="topnav">
+    <h1>SMART POWER SUPPLY MONITOR</h1>
+  </div>
+
+  <div class="content">
+    <div class="card-grid">
+      <div class="card">
+        <p class="card-title">Voltage</p>
+        <p class="reading"><span id="voltage">--</span> V</p>
+      </div>
+      <div class="card">
+        <p class="card-title">Current</p>
+        <p class="reading"><span id="current">--</span> mA</p>
+      </div>
+      <div class="card">
+        <p class="card-title">Power</p>
+        <p class="reading"><span id="power">--</span> mW</p>
+      </div>
+    </div>
+
+    <!-- Graph containers -->
+    <canvas id="voltageChart"></canvas>
+    <canvas id="currentChart"></canvas>
+    <canvas id="powerChart"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

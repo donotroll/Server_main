@@ -9,13 +9,13 @@ class SensorPacket:
     Ts: int
     read_flags: bytes
     dataPoints: list[list[float]]
+    length: int
 
 data_queue: asyncio.Queue[bytes] = asyncio.Queue()
 update_queue: asyncio.Queue[SensorPacket] = asyncio.Queue()
 
 
 async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-    """Handles incoming TCP data from ESP32 clients."""
     try:
         chunk = await reader.read()  # Read until EOF
         await data_queue.put(chunk)
@@ -44,10 +44,10 @@ async def process_queue():
             for raw_data_bytes in parts[3:]:
                 size = len(raw_data_bytes) // 4
                 raw_data = struct.unpack(f'<{size}f', raw_data_bytes)
-                dataPoints.append(raw_data)
+                dataPoints.append(list(raw_data))
 
-            packet = SensorPacket(id, Ts, read_flag, dataPoints)
-            print(packet)
+            packet = SensorPacket(id, Ts, read_flag, dataPoints, len(dataPoints[0]) if dataPoints else 0)
+            #print(packet)
             await update_queue.put(packet)
 
         except Exception as e:
@@ -57,17 +57,16 @@ async def consume_updates():
     while True:
         packet = await update_queue.get()
 
-        for i in range(3):
-            if packet.read_flags[0] >> i & 1:
-                msg = {
-                    "type": "sensor_update",
-                    "id": packet.id,
-                    "read_type": i,
-                    "Ts": packet.Ts,
-                    "dataPoints": packet.dataPoints.pop(0) if packet.dataPoints else [0.0] * 10,
+        for i in range(packet.length):
+            for j in range(3):
+                if packet.read_flags[0] >> j & 1:
+                    msg = {
+                        "group_id": packet.id,
+                        "group_index": j,
+                        "dataPoint": packet.dataPoints[j].pop(0) if packet.dataPoints[j] else 0.0,
                 }
-                print(msg)
-                await broadcast(str(msg)) 
+                #print(msg)
+                await broadcast(str(msg))
 
 async def start_tcp_server(host: str, port: int):
     server = await asyncio.start_server(handle_client, host, port)

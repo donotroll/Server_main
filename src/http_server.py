@@ -3,7 +3,6 @@ from pathlib import Path
 
 WEB_DIR = Path("data")  
 
-
 websocket_clients = set()
 
 async def websocket_handler(request: web.Request):
@@ -29,7 +28,7 @@ async def websocket_handler(request: web.Request):
 
 
 async def index_handler(request: web.Request):
-    return web.FileResponse(WEB_DIR / "webpage.html")
+    return web.FileResponse(WEB_DIR / "index.html")
 
 def create_web_app():
     app = web.Application()
