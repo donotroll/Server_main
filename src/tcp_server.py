@@ -1,5 +1,6 @@
 import asyncio
 import struct
+from http_server import broadcast
 from dataclasses import dataclass
 
 @dataclass
@@ -33,7 +34,7 @@ async def process_queue():
             if len(parts) < 4:
                 continue
 
-            print(f"[QUEUE] Received {len(data)} bytes, {parts}")
+            #print(f"[QUEUE] Received {len(data)} bytes, {parts}")
 
             id = int.from_bytes(parts[0], "little")
             read_flag = parts[1]
@@ -52,6 +53,21 @@ async def process_queue():
         except Exception as e:
             print(f"Error with deserialization: {e}")
 
+async def consume_updates():
+    while True:
+        packet = await update_queue.get()
+
+        for i in range(3):
+            if packet.read_flags[0] >> i & 1:
+                msg = {
+                    "type": "sensor_update",
+                    "id": packet.id,
+                    "read_type": i,
+                    "Ts": packet.Ts,
+                    "dataPoints": packet.dataPoints.pop(0) if packet.dataPoints else [0.0] * 10,
+                }
+                print(msg)
+                await broadcast(str(msg)) 
 
 async def start_tcp_server(host: str, port: int):
     server = await asyncio.start_server(handle_client, host, port)
@@ -59,7 +75,7 @@ async def start_tcp_server(host: str, port: int):
     print(f"ESP32 TCP server running on {addrs}")
 
     async with server:
-        await asyncio.gather(server.serve_forever(), process_queue())
+        await asyncio.gather(server.serve_forever(), process_queue(), consume_updates())
 
 
 

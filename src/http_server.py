@@ -1,6 +1,5 @@
 from aiohttp import web, WSMsgType
 from pathlib import Path
-from tcp_server import update_queue
 
 WEB_DIR = Path("data")  
 
@@ -53,20 +52,3 @@ async def broadcast(message: str):
     for ws in list(websocket_clients):
         if not ws.closed:
             await ws.send_str(message)
-
-async def consume_updates():
-    while True:
-        packet = await update_queue.get()
-
-        for i in range(3):
-            if packet.read_flags[0] >> i & 1:
-                msg = {
-                    "type": "sensor_update",
-                    "id": packet.id,
-                    "read_type": i,
-                    "Ts": packet.Ts,
-                    "dataPoints": packet.dataPoints.pop(0) if packet.dataPoints else [0.0] * 10,
-                }
-                await broadcast(str(msg)) 
-
-

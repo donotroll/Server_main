@@ -39,6 +39,7 @@ var Socket;
 
 function init() {
   Socket = new WebSocket('ws://' + window.location.host + '/ws');
+  console.log(Socket)
   charts.push(createChart(document.getElementById('c0')));
   charts.push(createChart(document.getElementById('c1')));
 
@@ -67,6 +68,7 @@ function addData(chart, obj) {
 
 function processCommand(event) {
   var obj = JSON.parse(event.data);
+  console.log("hello" + obj);
   var type = obj.type;
   if (type.localeCompare("random_intensity") == 0) { 
     var l_random_intensity = parseInt(obj.value); 
